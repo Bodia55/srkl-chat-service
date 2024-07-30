@@ -42,11 +42,22 @@ const handleGetAllChats = async (userId) => {
 }
 
 const handleGetChatsWith = async (chatId) => {
-    const response = await axios.get(`${BASE_URL}/chat/getChatsWith/${chatId}`);
-    if (response?.data) {
-        return response?.data?.data;
-    }
-    else {
+    try {
+        const response = await axios.post(`${BASE_URL}/chat/sendMessage/${withId}`, {
+            userId: userId,
+            message: message
+        });
+
+        console.log('API Response:', response.data);
+
+        if (response?.data?.success) {
+            return response?.data?.data;
+        } else {
+            console.error('Error adding chat message:', response.data);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error in addChatMessage:', error);
         return [];
     }
 }
