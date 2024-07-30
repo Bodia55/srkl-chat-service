@@ -51,6 +51,19 @@ const handleGetChatsWith = async (chatId) => {
     }
 }
 
+const addChatMessage = (withId, userId, message) => {
+    const response = axios.post(`${BASE_URL}/chat/sendMessage/${withId}`, {
+        userId: userId,
+        message: message
+    });
+    if (response?.data?.success) {
+        return response?.data?.data;
+    }
+    else {
+        return [];
+    }
+}
+
 io.on('connection', (socket) => {
     console.log('A user connected');
 
@@ -72,12 +85,13 @@ io.on('connection', (socket) => {
         io.to(userSocketId).emit('getChatsWith', {data: chatHistory});
     });
 
-    socket.on('private message', function (data) {
-        const { recipientUserId, message } = data;
-        const recipientSocketId = userSockets[recipientUserId];
+    socket.on('privateMessage', function ({ withId, userId, message }) {
+        const userSocketId = userSockets[userId];
+        const withSocketId = userSockets[withId];
 
-        if (recipientSocketId) {
-            io.to(recipientSocketId).emit('private message', { sender: socket.id, message });
+        if (withSocketId) {
+            io.to(withSocketId).with(userSocketId).emit('privateMessage', { sender: userId, message });
+            addChatMessage(withId, userId, message);
             console.log(`Message sent from ${socket.id} to ${recipientUserId}`);
         } 
     });
