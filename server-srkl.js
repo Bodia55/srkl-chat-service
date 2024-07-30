@@ -1,6 +1,7 @@
 const express = require('express');
 const { createServer } = require('http');
 const socketIo = require('socket.io');
+const axios = require('axios');
 const cors = require('cors');
 
 const app = express();
@@ -21,12 +22,24 @@ const io = socketIo(server, {
 // app.use(express.static('public'));
 
 const PORT = 3000;
+const BASE_URL = 'https://api.srkl.app/api/srkl';
 
 let userSockets = {};
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
+
+const handleGetAllChats = async (userId) => {
+    const response = await axios.get(`${BASE_URL}/chat/getAllChats?userId=${userId}`);
+    if (response?.data?.success) {
+        return response?.data?.data;
+    }
+    else {
+        console.log("Nothing Here");
+        return [];
+    }
+}
 
 io.on('connection', (socket) => {
     console.log('A user connected');
@@ -36,6 +49,12 @@ io.on('connection', (socket) => {
     if (userId !== undefined) {
         userSockets[userId] = socket.id;
     }
+
+    socket.on('getAllChats', async ({ userId }) => {
+        const userSocketId = userSockets[userId];
+        const chats = await handleGetAllChats(userId);
+        io.to(userSocketId).emit('getAllChats', {data: chats});
+    });
 
     socket.on('private message', function (data) {
         const { recipientUserId, message } = data;
