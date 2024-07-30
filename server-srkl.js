@@ -42,6 +42,16 @@ const handleGetAllChats = async (userId) => {
 }
 
 const handleGetChatsWith = async (chatId) => {
+    const response = await axios.get(`${BASE_URL}/chat/getChatsWith/${chatId}`);
+    if (response?.data) {
+        return response?.data?.data;
+    }
+    else {
+        return [];
+    }
+}
+
+const addChatMessage = async (withId, userId, message) => {
     try {
         const response = await axios.post(`${BASE_URL}/chat/sendMessage/${withId}`, {
             userId: userId,
@@ -58,20 +68,6 @@ const handleGetChatsWith = async (chatId) => {
         }
     } catch (error) {
         console.error('Error in addChatMessage:', error);
-        return [];
-    }
-}
-
-const addChatMessage = async (withId, userId, message) => {
-    const response = await axios.post(`${BASE_URL}/chat/sendMessage/${withId}`, {
-        userId: userId,
-        message: message
-    });
-    console.log(response.data);
-    if (response?.data?.success) {
-        return response?.data?.data;
-    }
-    else {
         return [];
     }
 }
