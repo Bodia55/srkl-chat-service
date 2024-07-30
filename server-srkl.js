@@ -99,9 +99,9 @@ io.on('connection', (socket) => {
 
         if (withSocketId) {
             io.to(withSocketId).emit('privateMessage', { sender: userId, message: message });
-            await addChatMessage(withId, userId, message);
-            console.log(`Message sent from ${socket.id} to ${recipientUserId}`);
-        } 
+        }
+        await addChatMessage(withId, userId, message);
+        console.log(`Message sent from ${socket.id} to ${recipientUserId}`);
     });
       
     // Listen for chat messages
