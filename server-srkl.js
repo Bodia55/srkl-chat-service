@@ -41,6 +41,16 @@ const handleGetAllChats = async (userId) => {
     }
 }
 
+const handleGetChatsWith = async (chatId) => {
+    const response = await axios.get(`${BASE_URL}/chat/getChatsWith/${chatId}`);
+    if (response?.data) {
+        return response?.data?.data;
+    }
+    else {
+        return [];
+    }
+}
+
 io.on('connection', (socket) => {
     console.log('A user connected');
 
@@ -54,6 +64,12 @@ io.on('connection', (socket) => {
         const userSocketId = userSockets[userId];
         const chats = await handleGetAllChats(userId);
         io.to(userSocketId).emit('getAllChats', {data: chats});
+    });
+
+    socket.on('getChatsWith', async ({ chatId, userId }) => {
+        const userSocketId = userSockets[userId];
+        const chatHistory = await handleGetChatsWith(chatId);
+        io.to(userSocketId).emit('getChatsWith', {data: chatHistory});
     });
 
     socket.on('private message', function (data) {
