@@ -51,11 +51,12 @@ const handleGetChatsWith = async (chatId) => {
     }
 }
 
-const addChatMessage = (withId, userId, message) => {
-    const response = axios.post(`${BASE_URL}/chat/sendMessage/${withId}`, {
+const addChatMessage = async (withId, userId, message) => {
+    const response = await axios.post(`${BASE_URL}/chat/sendMessage/${withId}`, {
         userId: userId,
         message: message
     });
+    console.log(response.data);
     if (response?.data?.success) {
         return response?.data?.data;
     }
