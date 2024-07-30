@@ -90,7 +90,7 @@ io.on('connection', (socket) => {
         const withSocketId = userSockets[withId];
 
         if (withSocketId) {
-            io.to(withSocketId).to(userSocketId).emit('privateMessage', { sender: userId, message: message });
+            io.to(withSocketId).emit('privateMessage', { sender: userId, message: message });
             addChatMessage(withId, userId, message);
             console.log(`Message sent from ${socket.id} to ${recipientUserId}`);
         } 
