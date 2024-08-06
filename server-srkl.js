@@ -79,11 +79,6 @@ const addChatMessage = async (withId, userId, message) => {
 app.post('/emitMedia', async (req, res) => {
     const { withId, userId, media } = req.body;
 
-    console.log("HERE");
-
-    console.log(withId);
-    console.log(userId);
-
     const userSocketId = userSockets[userId];
     const withSocketId = userSockets[withId];
 
