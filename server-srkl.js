@@ -80,6 +80,7 @@ app.post('/emitMedia', async (req, res) => {
     const { withId, userId, media } = req.body;
 
     console.log(withId);
+    console.log(userId);
 
     const userSocketId = userSockets[userId];
     const withSocketId = userSockets[withId];
