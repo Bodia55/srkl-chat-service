@@ -72,6 +72,31 @@ const addChatMessage = async (withId, userId, message) => {
     }
 }
 
+const addChatMedia = async (withId, userId, media) => {
+    try {
+        const response = await axios.post(`${BASE_URL}/chat/sendMessage/${withId}`, {
+            userId: userId,
+            media: media
+        }, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+
+        console.log('API Response:', response.data);
+
+        if (response?.data?.success) {
+            return response?.data?.data;
+        } else {
+            console.error('Error adding chat message:', response.data);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error in addChatMessage:', error);
+        return [];
+    }
+}
+
 io.on('connection', (socket) => {
     console.log('A user connected');
 
@@ -96,12 +121,20 @@ io.on('connection', (socket) => {
     socket.on('privateMessage', async function ({ withId, userId, message, media }) {
         const userSocketId = userSockets[userId];
         const withSocketId = userSockets[withId];
+        var hasFile = false;
+
+        if (media) {
+            hasFile = true;
+            await addChatMedia(withId, userId, media);
+        }
 
         if (withSocketId) {
             io.to(withSocketId).emit('privateMessage', { sender: userId, message: message, media: media });
         }
-        
-        await addChatMessage(withId, userId, message);
+
+        if (hasFile) {
+            await addChatMessage(withId, userId, message);
+        }
         console.log(`Message sent from ${socket.id} to ${withId}`);
     });
       
