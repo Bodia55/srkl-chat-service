@@ -93,13 +93,14 @@ io.on('connection', (socket) => {
         io.to(userSocketId).emit('getChatsWith', {data: chatHistory});
     });
 
-    socket.on('privateMessage', async function ({ withId, userId, message }) {
+    socket.on('privateMessage', async function ({ withId, userId, message, media }) {
         const userSocketId = userSockets[userId];
         const withSocketId = userSockets[withId];
 
         if (withSocketId) {
-            io.to(withSocketId).emit('privateMessage', { sender: userId, message: message });
+            io.to(withSocketId).emit('privateMessage', { sender: userId, message: message, media: media });
         }
+        
         await addChatMessage(withId, userId, message);
         console.log(`Message sent from ${socket.id} to ${withId}`);
     });
