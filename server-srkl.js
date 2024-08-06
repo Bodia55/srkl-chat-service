@@ -76,7 +76,7 @@ app.post('/emitMedia', async (req, res) => {
     const { withId, userId, media } = req.body;
 
     const userSocketId = userSockets[userId];
-    const withSocketId = userSockets[withId];
+    const withSocketId = userSockets[Number(withId)];
 
     console.log(withSocketId);
 
