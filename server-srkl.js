@@ -79,6 +79,7 @@ app.post('/emitMedia', async (req, res) => {
     const withSocketId = userSockets[withId];
 
     if (withSocketId) {
+        console.log("HERE HERE");
         io.to(withSocketId).emit('privateMessage', { sender: userId, media: media });
     }
     
