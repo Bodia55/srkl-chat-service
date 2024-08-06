@@ -3,10 +3,15 @@ const { createServer } = require('http');
 const socketIo = require('socket.io');
 const axios = require('axios');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
 
 const server = createServer(app);
 const io = socketIo(server, {
@@ -19,7 +24,6 @@ const io = socketIo(server, {
     allowEIO3: true
 });
 
-// app.use(express.static('public'));
 
 const PORT = 3000;
 const BASE_URL = 'https://api.srkl.app/api/srkl';
@@ -76,9 +80,7 @@ app.post('/emitMedia', async (req, res) => {
     const { withId, userId, media } = req.body;
 
     const userSocketId = userSockets[userId];
-    const withSocketId = userSockets[Number(withId)];
-
-    console.log(withSocketId);
+    const withSocketId = userSockets[withId];
 
     if (withSocketId) {
         console.log("HERE HERE");
